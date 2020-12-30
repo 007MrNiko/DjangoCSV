@@ -7,6 +7,10 @@
     padding: 0 10em;
 }
 
+.edit_link{
+    text-decoration: none !important;
+}
+
 @media screen and (max-width: 767px){
     .main_program{
         padding: 0 10%;

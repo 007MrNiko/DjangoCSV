@@ -7,6 +7,8 @@ from django.contrib.auth import (
 )
 from django.contrib import messages
 
+from main.models import Schemas
+
 
 # Create your views here.
 
@@ -20,7 +22,26 @@ def schemas(request):
     if not request.user.is_authenticated:
         return redirect("login")
 
-    return render(request, "main/schemas.html")
+    user_schemas = Schemas.objects.all().filter(user=request.user)
+
+    data = {
+        "schemas": user_schemas
+    }
+
+    return render(request, "main/schemas.html", data)
+
+def schemas_delete(request, id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    schema_to_delete = Schemas.objects.get(id=id)
+    if schema_to_delete.user == request.user:
+        schema_to_delete.delete()
+        messages.add_message(request, messages.SUCCESS, "Your schema has been successfully "
+                                                        "deleted.")
+
+    return redirect(request, "schemas")
+
 
 def login(request):
     if request.method == "POST":
