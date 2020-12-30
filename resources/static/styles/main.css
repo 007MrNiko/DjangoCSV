@@ -11,6 +11,10 @@
     text-decoration: none !important;
 }
 
+.invalid_feedback_modifier {
+    display: inline;
+}
+
 @media screen and (max-width: 767px){
     .main_program{
         padding: 0 10%;

@@ -6,13 +6,11 @@
              <h2>Data schemas</h2>
           </div>
           <div>
-              <form action="{% url "home" %}">
-              <h2><button type="submit" class="btn btn-success">New schema</button></h2>
-              </form>
+              <h2><a type="submit" href="{% url "schemas_new" %}" class="btn btn-success">New schema</a></h2>
           </div>
     </div>
     <div>
-        <table class="table">
+        <table class="table table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -24,10 +22,10 @@
           <tbody>
           {% for schema in schemas %}
               <tr>
-                  <th scope="row">{{ schema.id }}</th>
+                  <th scope="row">{{ forloop.counter }}</th>
                   <td>{{ schema.name }}</td>
                   <td>{{ schema.last_modified|date:"j F Y H:i" }}</td>
-                  <td>
+                  <td class="d-flex justify-content-center">
                       <a class="link-primary edit_link" href=""><i class="fas fa-edit"></i> Edit scheme</a>
                       <a class="link-danger ms-3 edit_link" href="{% url "schemas_delete" schema.id %}"><i class="fas fa-trash-alt"></i> Delete</a>
                   </td>

@@ -8,6 +8,7 @@ from django.contrib.auth import (
 from django.contrib import messages
 
 from main.models import Schemas
+from main.forms import SchemasNewForm
 
 
 # Create your views here.
@@ -17,6 +18,7 @@ def home(response):
         return redirect("login")
 
     return render(response, "main/home.html")
+
 
 def schemas(request):
     if not request.user.is_authenticated:
@@ -28,7 +30,32 @@ def schemas(request):
         "schemas": user_schemas
     }
 
-    return render(request, "main/schemas.html", data)
+    return render(request, "main/schemas/all.html", data)
+
+
+def schemas_new(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    if request.method == "POST":
+        form_schema_new = SchemasNewForm(request.POST)
+        if form_schema_new.is_valid():
+            schema = form_schema_new.save(commit=False)
+
+            schema.user = request.user
+            schema.save()
+            messages.add_message(request, messages.SUCCESS, f"Your schema '{schema.name}' has been successfully "
+                                                            "created.")
+            return redirect("schemas")
+    else:
+        form_schema_new = SchemasNewForm()
+
+    data = {
+        "form_new": form_schema_new
+    }
+
+    return render(request, "main/schemas/new.html", data)
+
 
 def schemas_delete(request, id):
     if not request.user.is_authenticated:
@@ -37,10 +64,10 @@ def schemas_delete(request, id):
     schema_to_delete = Schemas.objects.get(id=id)
     if schema_to_delete.user == request.user:
         schema_to_delete.delete()
-        messages.add_message(request, messages.SUCCESS, "Your schema has been successfully "
-                                                        "deleted.")
+        '''messages.add_message(request, messages.SUCCESS, "Your schema has been successfully "
+                                                        "deleted.")'''
 
-    return redirect(request, "schemas")
+    return redirect("schemas")
 
 
 def login(request):
@@ -57,6 +84,7 @@ def login(request):
             login_user(request, user)
             return redirect("home")
     return render(request, "main/login.html")
+
 
 def logout(request):
     if not request.user.is_authenticated:
