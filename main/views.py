@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login as login_user
+from django.contrib.auth import (
+    authenticate,
+    login as login_user,
+    logout as logout_user
+)
 from django.contrib import messages
 
 
@@ -11,6 +15,12 @@ def home(response):
         return redirect("login")
 
     return render(response, "main/home.html")
+
+def schemas(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    return render(request, "main/schemas.html")
 
 def login(request):
     if request.method == "POST":
@@ -26,3 +36,9 @@ def login(request):
             login_user(request, user)
             return redirect("home")
     return render(request, "main/login.html")
+
+def logout(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    logout_user(request)
+    return redirect("home")

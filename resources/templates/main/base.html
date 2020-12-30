@@ -23,12 +23,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-                <a class="nav-link" href="#">Features</a>
-                <a class="nav-link" href="#">Pricing</a>
-                  <span class="navbar-text">
-                      Welcome, {{ user.username }}
-                  </span>
+                    <a class="nav-link active" aria-current="page" href="{% url "home" %}">Home</a>
+                    <a class="nav-link" href="{% url "schemas" %}">Schemas</a>
+                    <a class="nav-link" href="{% url 'admin:index' %}">Admin panel</a>
+                    <a class="nav-link" href="{% url "logout" %}">Logout</a>
+                      <!--<span class="navbar-text">
+                          Welcome, {{ user.username }}
+                      </span>-->
               </div>
             </div>
           </div>
