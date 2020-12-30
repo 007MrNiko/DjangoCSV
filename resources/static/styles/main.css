@@ -1,3 +1,19 @@
-*{
-    color: red;
+.main_program{
+    padding: 0 15%;
+    margin: 130px 0 160px;
+}
+
+.login_form{
+    padding: 0 10em;
+}
+
+@media screen and (max-width: 767px){
+    .main_program{
+        padding: 0 10%;
+    }
+}
+@media screen and (max-width: 950px){
+    .login_form{
+        padding: 0;
+    }
 }
