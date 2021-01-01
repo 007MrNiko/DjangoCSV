@@ -7,8 +7,8 @@ from django.contrib.auth import (
 )
 from django.contrib import messages
 
-from main.models import Schemas
-from main.forms import SchemasNewForm
+from main.models import Schemas, SchemasColumn
+from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset
 
 
 # Create your views here.
@@ -39,19 +39,31 @@ def schemas_new(request):
 
     if request.method == "POST":
         form_schema_new = SchemasNewForm(request.POST)
-        if form_schema_new.is_valid():
+        formset_schema_column = SchemasColumnFormset(request.POST)[1:]  # removing first blank from system
+        if form_schema_new.is_valid() and formset_schema_column.is_valid():
             schema = form_schema_new.save(commit=False)
 
             schema.user = request.user
             schema.save()
+
+            for form in formset_schema_column:
+                # so that `book` instance can be attached.
+                column = form.save(commit=False)
+                column.schema = schema
+                column.save()
+
             messages.add_message(request, messages.SUCCESS, f"Your schema '{schema.name}' has been successfully "
                                                             "created.")
             return redirect("schemas")
+
     else:
         form_schema_new = SchemasNewForm()
+        formset_schema_column = SchemasColumnFormset()
 
     data = {
-        "form_new": form_schema_new
+        "form_new": form_schema_new,
+        "form_add_category": SchemasNewCategories(),
+        "form_set": formset_schema_column
     }
 
     return render(request, "main/schemas/new.html", data)
