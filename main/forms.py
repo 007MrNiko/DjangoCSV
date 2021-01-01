@@ -51,11 +51,14 @@ SchemasColumnFormset = inlineformset_factory(
     extra=1,
     fields=("name", "category", "min_integer", "max_integer", "sentence_amount", "order"),
     widgets={
-        "name": forms.TextInput(attrs={"class": "form-control", "required": "required"}),
-        "category": forms.Select(attrs={"class": "form-select", "required": "required"}),
+        "name": forms.TextInput(attrs={"class": "form-control text_input", "required": "required"}),
+        "category": forms.Select(attrs={"class": "form-select category_input",
+                                        "required": "required",
+                                        "onchange": "realTimeChanging(this.id)"
+                                        }),
         "min_integer": forms.NumberInput(attrs={"class": "form-control integer_type"}),
         "max_integer": forms.NumberInput(attrs={"class": "form-control integer_type"}),
         "sentence_amount": forms.NumberInput(attrs={"class": "form-control sentence_type"}),
-        "order": forms.NumberInput(attrs={"class": "form-control", "required": "required"}),
+        "order": forms.NumberInput(attrs={"class": "form-control order_input", "required": "required"}),
     }
 )

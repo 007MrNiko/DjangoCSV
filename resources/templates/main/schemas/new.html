@@ -1,59 +1,8 @@
 {% extends "main/base.html" %}
+{% load static %}
 
 {% block scripts %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        let columnForm= document.querySelectorAll(".column_form")
-        let container = document.querySelector("#submit_form")
-        let addButton = document.querySelector("#add_form")
-        let totalForms = document.querySelector("#id_schemascolumn_set-TOTAL_FORMS")
-        let newPosition = document.querySelector("#additional_columns")
-
-        let formNum = columnForm.length-1
-        addButton.addEventListener('click', addForm)
-
-        function addForm(e){
-            e.preventDefault()
-
-            let newForm = columnForm[0].cloneNode(true)
-            newForm.removeAttribute("hidden")
-            let formRegex = RegExp(/_set-(\d)-/,'g')
-            let columnType = document.querySelector("#id_category_type").value
-            let columnName = document.querySelector("#id_category_type").value
-
-            if (columnType === "integer"){
-                deactivateElements(newForm, false)
-            }
-            else if (columnType === "text"){
-                deactivateElements(newForm, true, false)
-            }
-            else {
-                deactivateElements(newForm)
-            }
-
-            formNum++
-            newForm.innerHTML = newForm.innerHTML.replace(formRegex, `_set-${formNum}-`)
-            container.insertBefore(newForm, newPosition)
-
-            totalForms.setAttribute('value', `${formNum+1}`)
-
-
-        }
-
-        function removeTemplateFormRequirements(){
-
-        }
-
-        function deactivateElements(newForm, integers = true, sentences = true){
-            if (integers){
-                newForm.querySelectorAll(".integer_type").forEach(element => element.closest("div").setAttribute("hidden", true))
-            }
-            if (sentences){
-                newForm.querySelector(".sentence_type").closest("div").setAttribute("hidden", true)
-            }
-        }
-    </script>
-
+    <script src="{% static "scripts/form_creation.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -84,25 +33,7 @@
             <h2>Schema columns</h2>
             <!--Add new forms here-->
             {{ form_set.management_form }}
-            {% for form in form_set.forms %}
-                <div class="row mb-3 column_form" {% if forloop.counter0 == 0%}hidden{% endif %}>
-                {% for field in form %}
-                    {% if field.field.widget.input_type != "hidden" %}
-                        {% if "order" in field.auto_id %}
-                            <div class="col-sm-2">
-                                <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
-                                {{ field }}
-                            </div>
-                        {% else %}
-                            <div class="col-sm-3">
-                                <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
-                                {{ field }}
-                            </div>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                </div>
-            {% endfor %}
+
             <placement id="additional_columns"></placement>
         </div>
     </form>
@@ -124,4 +55,27 @@
         </div>
         <button type="submit" id="add_form" name="add_column" class="btn btn-primary add-row">Add Column</button>
     </form>
+
+    <div hidden>
+
+        <div class="row mb-3 column_form">
+        {% for field in form_set.forms|first %}
+            {% if field.field.widget.input_type != "hidden" %}
+                {% if "order" in field.auto_id %}
+                    <div class="col-sm-2">
+                        <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% else %}
+                    <div class="col-sm-3">
+                        <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </div>
+
+    </div>
+
 {% endblock %}

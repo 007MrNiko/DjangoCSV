@@ -39,10 +39,10 @@ def schemas_new(request):
 
     if request.method == "POST":
         form_schema_new = SchemasNewForm(request.POST)
-        formset_schema_column = SchemasColumnFormset(request.POST)[1:]  # removing first blank from system
+        formset_schema_column = SchemasColumnFormset(request.POST)  # removing first blank from system
+        print(len(formset_schema_column))
         if form_schema_new.is_valid() and formset_schema_column.is_valid():
             schema = form_schema_new.save(commit=False)
-
             schema.user = request.user
             schema.save()
 
@@ -55,6 +55,10 @@ def schemas_new(request):
             messages.add_message(request, messages.SUCCESS, f"Your schema '{schema.name}' has been successfully "
                                                             "created.")
             return redirect("schemas")
+
+        elif len(formset_schema_column) == 1 and form_schema_new.is_valid():
+            messages.add_message(request, messages.ERROR, f"Please add at least one column")
+            print("yes")
 
     else:
         form_schema_new = SchemasNewForm()
