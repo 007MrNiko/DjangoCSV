@@ -19,12 +19,15 @@ function addForm(e){
 
     if (columnType === "integer"){
         deactivateElements(newForm, false)
+        moveOrderField(newForm, -4)
     }
     else if (columnType === "text"){
         deactivateElements(newForm, true, false)
+        moveOrderField(newForm, -2)
     }
     else {
         deactivateElements(newForm)
+        moveOrderField(newForm, 0)
     }
 
     formNum++
@@ -66,14 +69,30 @@ function realTimeChanging(element_id){
     if (selectValue === "integer"){
         activateElements(editForm, true)
         deactivateElements(editForm, false)
+        moveOrderField(editForm, -4)
     }
     else if (selectValue === "text"){
         activateElements(editForm, false, true)
         deactivateElements(editForm, true, false)
+        moveOrderField(editForm, -2)
     }
     else {
         deactivateElements(editForm)
+        moveOrderField(editForm, 0)
     }
     editForm.querySelector(".category_input").value = selectValue;
     parentNode.replaceChild(editForm, oldForm)
+}
+
+function moveOrderField(editForm, position = 0){
+    let moveCol = editForm.getElementsByClassName("moving_order")[0]
+    let marginRegex = RegExp(/offset-sm-/, 'g')
+    let currentMargin = ""
+    moveCol.classList.forEach(element => {
+        if(element.match(marginRegex)) {
+            currentMargin = element
+        }
+    });
+
+    moveCol.classList.replace(currentMargin, `offset-sm-${6+position}`)
 }

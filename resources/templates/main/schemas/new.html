@@ -33,7 +33,6 @@
             <h2>Schema columns</h2>
             <!--Add new forms here-->
             {{ form_set.management_form }}
-
             <placement id="additional_columns"></placement>
         </div>
     </form>
@@ -57,17 +56,19 @@
     </form>
 
     <div hidden>
-
         <div class="row mb-3 column_form">
         {% for field in form_set.forms|first %}
             {% if field.field.widget.input_type != "hidden" %}
                 {% if "order" in field.auto_id %}
-                    <div class="col-sm-2">
+                    <div class="col-sm-1 offset-sm-6 moving_order">
                         <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
                         {{ field }}
                     </div>
+                    <div class="col-sm-1" style="text-align: center; padding-top: 2em;">
+                        <a class="link-danger ms-3 edit_link" style="cursor: pointer;"><i class="fas fa-trash-alt fa-2x"></i></a>
+                    </div>
                 {% else %}
-                    <div class="col-sm-3">
+                    <div class="col-sm-2">
                         <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
                         {{ field }}
                     </div>
