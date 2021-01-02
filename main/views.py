@@ -1,7 +1,8 @@
-from django.http import FileResponse
+from django.http import FileResponse, JsonResponse
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.core import serializers
 from django.contrib.auth import (
     authenticate,
     login as login_user,
@@ -115,7 +116,9 @@ def dataset(request, id):
 
                 messages.add_message(request, messages.SUCCESS, "Your dataset has been successfully "
                                                                 "created.")
-                return redirect("dataset", id)
+                ser_instance = serializers.serialize('json', [dataset_form, ])
+                return JsonResponse({"instance": ser_instance}, status=200)
+                #return redirect("dataset", id)
         else:
             dataset_form = DatasetForm()
 

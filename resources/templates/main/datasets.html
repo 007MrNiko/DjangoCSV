@@ -1,12 +1,71 @@
 {% extends "main/base.html" %}
 
+{% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        /*
+        On submiting the form, send the POST ajax
+        request to server and after successfull submission
+        display the object.
+        */
+        $("#data-set-form").submit(function (e) {
+            // preventing from page reload and default actions
+            e.preventDefault();
+            // serialize the data for sending the form data.
+            var serializedData = $(this).serialize();
+            // make POST ajax call
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'dataset' schema_id %}",
+                data: serializedData,
+                success: function (response) {
+                    // on successfull creating object
+                    // 1. clear the form.
+                    $("#data-set-form").trigger('reset');
+                    // 2. focus to nickname input
+                    $("#id_nick_name").focus();
+
+                    // display the newly friend to table.
+                    var instance = JSON.parse(response["instance"]);
+                    var fields = instance[0]["fields"];
+                    var count = parseInt($('tr:last th:first').html()) + 1;
+                    $("#data-set-table tbody").append(
+                        `<tr>
+                          <th scope="row">${count}</th>
+                          <td>{{ dataset.date_created|date:"j F Y H:i" }}</td>
+                          <td>{{ dataset.rows }}</td>
+                          <td>
+                              {% if dataset.ready %}
+                                 <span class="badge bg-success">Ready</span>
+                              {% else %}
+                                <span class="badge bg-secondary">Processing</span>
+                              {% endif %}
+                          </td>
+                          <td>
+                              {% if dataset.ready %}
+                              <a class="link-primary edit_link" href="{% url "download" id_schema=schema_id id_dataset=dataset.id %}"><i class="fas fa-file-download"></i> Download</a>
+                              {% endif %}
+                          </td>
+                      </tr>`
+
+                    )
+                },
+                error: function (response) {
+                    // alert the error if any error occured
+                    alert(response["responseJSON"]["error"]);
+                }
+            })
+        })
+    </script>
+{% endblock %}
+
 {% block body %}
     <div class="d-flex justify-content-between">
         <div>
              <h2>Data sets - {{ name }}</h2>
           </div>
           <div>
-              <form method="POST" class="row row-cols-lg-auto g-3 align-items-end">
+              <form method="POST" id="data-set-form" class="row row-cols-lg-auto g-3 align-items-end">
                   {% csrf_token %}
                   <div class="col-sm-2 col-form-label">Rows: </div>
                   <div class="col-sm-2" style="width: 8em">{{ form.rows }}</div>
@@ -17,7 +76,7 @@
           </div>
     </div>
     <div>
-        <table class="table table-bordered">
+        <table class="table table-bordered" id="data-set-table">
           <thead>
             <tr>
               <th scope="col">#</th>
