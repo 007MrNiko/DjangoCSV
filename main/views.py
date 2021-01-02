@@ -39,18 +39,21 @@ def schemas_new(request):
 
     if request.method == "POST":
         form_schema_new = SchemasNewForm(request.POST)
-        formset_schema_column = SchemasColumnFormset(request.POST)  # removing first blank from system
-        print(len(formset_schema_column))
+        formset_schema_column = SchemasColumnFormset(request.POST)
+
         if form_schema_new.is_valid() and formset_schema_column.is_valid():
             schema = form_schema_new.save(commit=False)
             schema.user = request.user
             schema.save()
 
-            for form in formset_schema_column:
+            marked_for_delete = formset_schema_column.deleted_forms
+
+            for form in formset_schema_column.forms:
                 # so that `book` instance can be attached.
-                column = form.save(commit=False)
-                column.schema = schema
-                column.save()
+                if form not in marked_for_delete:
+                    column = form.save(commit=False)
+                    column.schema = schema
+                    column.save()
 
             messages.add_message(request, messages.SUCCESS, f"Your schema '{schema.name}' has been successfully "
                                                             "created.")

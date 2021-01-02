@@ -1,5 +1,7 @@
 from django import forms
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, BaseInlineFormSet, BooleanField, CheckboxInput
+from django.forms.formsets import DELETION_FIELD_NAME
+
 from main.models import Schemas, SchemasColumn, CATEGORY_TYPE
 
 
@@ -43,12 +45,22 @@ class SchemasNewCategories(forms.Form):
         widget=forms.NumberInput(attrs={"class": "form-control"})
     )
 
+class SchemasColumnFormsetEdit(BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super(SchemasColumnFormsetEdit, self).add_fields(form, index)
+        if self.can_delete:
+            form.fields[DELETION_FIELD_NAME] = BooleanField(
+                required=False,
+                widget=CheckboxInput(attrs={"class": "delete_column"})
+            )
+
 
 SchemasColumnFormset = inlineformset_factory(
     Schemas,
     SchemasColumn,
-    can_delete=False,
+    can_delete=True,
     extra=1,
+    formset=SchemasColumnFormsetEdit,
     fields=("name", "category", "min_integer", "max_integer", "sentence_amount", "order"),
     widgets={
         "name": forms.TextInput(attrs={"class": "form-control text_input", "required": "required"}),
@@ -56,9 +68,9 @@ SchemasColumnFormset = inlineformset_factory(
                                         "required": "required",
                                         "onchange": "realTimeChanging(this.id)"
                                         }),
-        "min_integer": forms.NumberInput(attrs={"class": "form-control integer_type"}),
-        "max_integer": forms.NumberInput(attrs={"class": "form-control integer_type"}),
-        "sentence_amount": forms.NumberInput(attrs={"class": "form-control sentence_type"}),
+        "min_integer": forms.NumberInput(attrs={"min": 0, "class": "form-control integer_type min_integer"}),
+        "max_integer": forms.NumberInput(attrs={"min": 0, "class": "form-control integer_type max_integer"}),
+        "sentence_amount": forms.NumberInput(attrs={"min": 0, "class": "form-control sentence_type"}),
         "order": forms.NumberInput(attrs={"class": "form-control order_input", "required": "required"}),
     }
 )

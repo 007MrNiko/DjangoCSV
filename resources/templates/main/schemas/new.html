@@ -65,7 +65,7 @@
                         {{ field }}
                     </div>
                     <div class="col-sm-1" style="text-align: center; padding-top: 2em;">
-                        <a class="link-danger ms-3 edit_link" style="cursor: pointer;"><i class="fas fa-trash-alt fa-2x"></i></a>
+                        <a class="link-danger ms-3 edit_link" id="{{ field.auto_id }}-del" onclick="setDeleted(this.id)" style="cursor: pointer;"><i class="fas fa-trash-alt fa-2x"></i></a>
                     </div>
                 {% else %}
                     <div class="col-sm-2">

@@ -16,6 +16,10 @@ function addForm(e){
     let columnType = document.querySelector("#id_category_type").value
     newForm.querySelector(".text_input").setAttribute("value", document.querySelector("#id_column_name").value)
     newForm.querySelector(".order_input").setAttribute("value", document.querySelector("#id_order").value)
+    newForm.querySelector(".delete_column").closest("div").setAttribute("hidden", true)
+    newForm.querySelector(".min_integer").setAttribute("value", 18)
+    newForm.querySelector(".max_integer").setAttribute("value", 60)
+    newForm.querySelector(".sentence_type").setAttribute("value", 5)
 
     if (columnType === "integer"){
         deactivateElements(newForm, false)
@@ -95,4 +99,13 @@ function moveOrderField(editForm, position = 0){
     });
 
     moveCol.classList.replace(currentMargin, `offset-sm-${6+position}`)
+}
+
+function setDeleted(element_id){
+    let deleteForm = document.querySelector(`#${element_id}`).closest("div.column_form")
+    deleteForm.getElementsByClassName("delete_column")[0].checked = true
+    deleteForm.querySelector(".text_input").setAttribute("value", "null")
+    deleteForm.querySelector(".order_input").setAttribute("value", 0)
+    deleteForm.setAttribute("hidden", true)
+
 }
