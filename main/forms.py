@@ -2,7 +2,22 @@ from django import forms
 from django.forms import inlineformset_factory, BaseInlineFormSet, BooleanField, CheckboxInput
 from django.forms.formsets import DELETION_FIELD_NAME
 
-from main.models import Schemas, SchemasColumn, CATEGORY_TYPE
+from main.models import Schemas, SchemasColumn, CATEGORY_TYPE, DataSets
+
+
+class DatasetForm(forms.ModelForm):
+    class Meta:
+        model = DataSets
+        fields = ("rows",)
+
+        widgets = {"rows": forms.NumberInput(attrs={"min": 0, "class": "form-control", "value": 100})}
+
+    def clean_rows(self):
+        rows = self.cleaned_data.get("rows")
+        if rows < 0:
+            raise forms.ValidationError("Please enter value grater than 0")
+        else:
+            return rows
 
 
 class SchemasNewForm(forms.ModelForm):

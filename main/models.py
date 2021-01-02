@@ -22,6 +22,10 @@ CATEGORY_TYPE = (
     ("text", "Text")
 )
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return f"user_{instance.schema.user.id}/{filename}"
+
 
 class Schemas(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -47,4 +51,14 @@ class SchemasColumn(models.Model):
 
     def __str__(self):
         return f"{self.schema.name} - {self.name}"
+
+
+class DataSets(models.Model):
+    schema = models.ForeignKey(Schemas, on_delete=models.CASCADE)
+
+    date_created = models.DateTimeField(verbose_name="date created", auto_now_add=True)
+    rows = models.IntegerField()
+    file = models.FileField(upload_to=user_directory_path, blank=True)
+    ready = models.BooleanField(default=False)
+
 

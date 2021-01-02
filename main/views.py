@@ -7,8 +7,8 @@ from django.contrib.auth import (
 )
 from django.contrib import messages
 
-from main.models import Schemas, SchemasColumn
-from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset
+from main.models import Schemas, DataSets
+from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
 
 
 # Create your views here.
@@ -83,10 +83,39 @@ def schemas_delete(request, id):
     schema_to_delete = Schemas.objects.get(id=id)
     if schema_to_delete.user == request.user:
         schema_to_delete.delete()
-        '''messages.add_message(request, messages.SUCCESS, "Your schema has been successfully "
-                                                        "deleted.")'''
 
     return redirect("schemas")
+
+
+def dataset(request, id):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    schema = Schemas.objects.filter(id=id, user=request.user)
+
+    if schema.exists():
+        schema = Schemas.objects.get(id=id)
+        datasets = DataSets.objects.filter(schema=schema)
+
+        if request.method == "POST":
+            dataset_form = DatasetForm(request.POST)
+            if dataset_form.is_valid():
+                print("NICE")
+                messages.add_message(request, messages.SUCCESS, "Your dataset has been successfully "
+                                                                "created.")
+        else:
+            dataset_form = DatasetForm()
+
+        data = {
+            "name": schema.name,
+            "datasets": datasets,
+            "form": dataset_form
+        }
+
+        return render(request, "main/data_sets.html", data)
+    else:
+        messages.add_message(request, messages.ERROR, "It is seems, that it is not your dataset.")
+        return redirect("home")
 
 
 def login(request):

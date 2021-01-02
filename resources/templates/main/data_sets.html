@@ -1,0 +1,51 @@
+{% extends "main/base.html" %}
+
+{% block body %}
+    <div class="d-flex justify-content-between">
+        <div>
+             <h2>Data sets - {{ name }}</h2>
+          </div>
+          <div>
+              <form method="POST" class="row row-cols-lg-auto g-3 align-items-end">
+                  {% csrf_token %}
+                  <div class="col-sm-2 col-form-label">Rows: </div>
+                  <div class="col-sm-2" style="width: 8em">{{ form.rows }}</div>
+                  <div class="col-sm-2">
+                      <button type="submit" class="btn btn-success">New schema</button>
+                  </div>
+              </form>
+          </div>
+    </div>
+    <div>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Created</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for dataset in datasets %}
+              <tr>
+                  <th scope="row">{{ forloop.counter }}</th>
+                  <td>{{ dataset.date_created|date:"j F Y H:i" }}</td>
+                  <td>
+                      {% if dataset.ready %}
+                          <span class="badge bg-success">Ready</span>
+                      {% else %}
+                        <span class="badge bg-secondary">Processing</span>
+                      {% endif %}
+                  </td>
+                  <td>
+                      {% if dataset.ready %}
+                      <a class="link-primary edit_link" href="#"><i class="fas fa-file-download"></i> Download</a>
+                      {% endif %}
+                  </td>
+              </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+    </div>
+{% endblock %}

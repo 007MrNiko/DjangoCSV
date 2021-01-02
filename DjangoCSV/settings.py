@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'main.apps.MainConfig',
+
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
@@ -125,3 +127,7 @@ STATIC_ROOT = BASE_DIR / "resources"
 STATICFILES_DIRS = [
     BASE_DIR / "resources/static"
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "resources/media"
+
