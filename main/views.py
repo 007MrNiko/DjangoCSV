@@ -10,6 +10,8 @@ from django.contrib import messages
 from main.models import Schemas, DataSets
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
 
+from extensions import generate_file
+
 
 # Create your views here.
 
@@ -61,7 +63,7 @@ def schemas_new(request):
 
         elif len(formset_schema_column) == 1 and form_schema_new.is_valid():
             messages.add_message(request, messages.ERROR, f"Please add at least one column")
-            print("yes")
+
 
     else:
         form_schema_new = SchemasNewForm()
@@ -100,9 +102,15 @@ def dataset(request, id):
         if request.method == "POST":
             dataset_form = DatasetForm(request.POST)
             if dataset_form.is_valid():
-                print("NICE")
+                dataset_form = dataset_form.save(commit=False)
+                dataset_form.schema = schema
+                dataset_form.save()
+
+                generate_file(dataset_form)
+
                 messages.add_message(request, messages.SUCCESS, "Your dataset has been successfully "
                                                                 "created.")
+                return redirect("dataset", id)
         else:
             dataset_form = DatasetForm()
 
@@ -112,7 +120,7 @@ def dataset(request, id):
             "form": dataset_form
         }
 
-        return render(request, "main/data_sets.html", data)
+        return render(request, "main/datasets.html", data)
     else:
         messages.add_message(request, messages.ERROR, "It is seems, that it is not your dataset.")
         return redirect("home")

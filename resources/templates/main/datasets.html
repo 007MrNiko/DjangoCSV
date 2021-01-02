@@ -22,6 +22,7 @@
             <tr>
               <th scope="col">#</th>
               <th scope="col">Created</th>
+              <th scope="col">Rows</th>
               <th scope="col">Status</th>
               <th scope="col">Actions</th>
             </tr>
@@ -31,6 +32,7 @@
               <tr>
                   <th scope="row">{{ forloop.counter }}</th>
                   <td>{{ dataset.date_created|date:"j F Y H:i" }}</td>
+                  <td>{{ dataset.rows }}</td>
                   <td>
                       {% if dataset.ready %}
                           <span class="badge bg-success">Ready</span>

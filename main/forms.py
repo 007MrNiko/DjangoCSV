@@ -10,7 +10,7 @@ class DatasetForm(forms.ModelForm):
         model = DataSets
         fields = ("rows",)
 
-        widgets = {"rows": forms.NumberInput(attrs={"min": 0, "class": "form-control", "value": 100})}
+        widgets = {"rows": forms.NumberInput(attrs={"min": 1, "class": "form-control", "value": 100})}
 
     def clean_rows(self):
         rows = self.cleaned_data.get("rows")
