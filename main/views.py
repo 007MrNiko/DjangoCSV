@@ -1,5 +1,7 @@
+from django.http import FileResponse
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from django.contrib.auth import (
     authenticate,
     login as login_user,
@@ -7,7 +9,7 @@ from django.contrib.auth import (
 )
 from django.contrib import messages
 
-from main.models import Schemas, DataSets
+from main.models import Schemas, DataSets, user_directory_path
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
 
 from extensions import generate_file
@@ -64,7 +66,6 @@ def schemas_new(request):
         elif len(formset_schema_column) == 1 and form_schema_new.is_valid():
             messages.add_message(request, messages.ERROR, f"Please add at least one column")
 
-
     else:
         form_schema_new = SchemasNewForm()
         formset_schema_column = SchemasColumnFormset()
@@ -106,7 +107,9 @@ def dataset(request, id):
                 dataset_form.schema = schema
                 dataset_form.save()
 
-                generate_file(dataset_form)
+                user_dir = settings.MEDIA_ROOT / f"user_{request.user.id}"
+
+                generate_file(dataset_form, user_dir)
 
                 messages.add_message(request, messages.SUCCESS, "Your dataset has been successfully "
                                                                 "created.")
@@ -117,13 +120,37 @@ def dataset(request, id):
         data = {
             "name": schema.name,
             "datasets": datasets,
-            "form": dataset_form
+            "form": dataset_form,
+            "schema_id": schema.id
         }
 
         return render(request, "main/datasets.html", data)
     else:
         messages.add_message(request, messages.ERROR, "It is seems, that it is not your dataset.")
         return redirect("home")
+
+
+def download(request, id_schema, id_dataset):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    dataset_download = DataSets.objects.filter(id=id_dataset)
+
+    if dataset_download.exists():
+        dataset_download = DataSets.objects.get(id=id_dataset)
+        if dataset_download.schema.user != request.user:
+            messages.add_message(request, messages.ERROR, "It is seems, that it is not your dataset.")
+        elif not dataset_download.ready:
+            messages.add_message(request, messages.ERROR, "Your data set is not ready yet, but still you guessed its "
+                                                          "id :).")
+        else:
+            filename = dataset_download.file.path
+            request = FileResponse(open(filename, 'rb'), "text/csv")
+            return request
+    else:
+        messages.add_message(request, messages.ERROR, "It is seems, that this dataset does not exist :(")
+
+    return redirect("dataset", id_schema)
 
 
 def login(request):

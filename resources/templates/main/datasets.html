@@ -42,7 +42,7 @@
                   </td>
                   <td>
                       {% if dataset.ready %}
-                      <a class="link-primary edit_link" href="#"><i class="fas fa-file-download"></i> Download</a>
+                      <a class="link-primary edit_link" href="{% url "download" id_schema=schema_id id_dataset=dataset.id %}"><i class="fas fa-file-download"></i> Download</a>
                       {% endif %}
                   </td>
               </tr>
