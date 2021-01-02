@@ -1,11 +1,12 @@
-from main.models import SchemasColumn
+from main.models import SchemasColumn, DataSets
 from pathlib import Path
 
 from .small_generators import *
 import csv
 
 
-def generate_file(dataset, user_dir):
+def generate_file(dataset_id, user_dir):
+    dataset = DataSets.objects.get(id=dataset_id)
     column_separator = dataset.schema.column_separator
     string_character = dataset.schema.string_character
     rows_amount = dataset.rows
@@ -19,7 +20,7 @@ def generate_file(dataset, user_dir):
     for i in range(rows_amount):
         row_list.append(generate_row_from_pattern(pattern))
 
-    filename = user_dir / f"CSV_{dataset.date_created}.csv"
+    filename = f"{user_dir}/CSV_{dataset.date_created}.csv"
 
     with open(filename, "w", newline='') as file:
         writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=column_separator, quotechar=string_character)

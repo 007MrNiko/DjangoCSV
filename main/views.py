@@ -13,6 +13,7 @@ from main.models import Schemas, DataSets, user_directory_path
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
 
 from extensions import generate_file
+from .tasks import generate_file_async
 
 
 # Create your views here.
@@ -109,7 +110,8 @@ def dataset(request, id):
 
                 user_dir = settings.MEDIA_ROOT / f"user_{request.user.id}"
 
-                generate_file(dataset_form, user_dir)
+                #generate_file(dataset_form, user_dir)
+                generate_file_async.apply_async((dataset_form.id, str(user_dir)))
 
                 messages.add_message(request, messages.SUCCESS, "Your dataset has been successfully "
                                                                 "created.")
