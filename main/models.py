@@ -30,13 +30,21 @@ def user_directory_path(instance, filename):
 class Schemas(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=30)
     last_modified = models.DateTimeField(verbose_name="last modified", auto_now=True)
     column_separator = models.CharField(max_length=1, choices=COLUMN_SEPARATORS, default=",")
     string_character = models.CharField(max_length=1, choices=STRING_CHARACTER, default="\"")
 
     def __str__(self):
         return f"{self.user.username} - {self.name}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'name'],
+                name='unique name for every user'
+            )
+        ]
 
 
 class SchemasColumn(models.Model):

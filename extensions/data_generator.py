@@ -20,7 +20,8 @@ def generate_file(dataset_id, user_dir):
     for i in range(rows_amount):
         row_list.append(generate_row_from_pattern(pattern))
 
-    filename = f"{user_dir}/CSV_{dataset.date_created}.csv"
+    Path(user_dir).mkdir(parents=True, exist_ok=True)
+    filename = f"{user_dir}/CSV_{dataset.date_created.strftime('%Y-%m-%d %H:%M:%S')}.csv"
 
     with open(filename, "w", newline='') as file:
         writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=column_separator, quotechar=string_character)
