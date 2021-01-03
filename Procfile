@@ -1,2 +1,2 @@
 web: gunicorn DjangoCSV.wsgi
-worker: celery -A DjangoCSV worker -B --loglevel=info
+worker: celery -A DjangoCSV worker -l INFO
