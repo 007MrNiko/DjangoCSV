@@ -116,9 +116,7 @@ def dataset(request, id):
 
                 messages.add_message(request, messages.SUCCESS, "Your dataset has been successfully "
                                                                 "created.")
-                ser_instance = serializers.serialize('json', [dataset_form, ])
-                return JsonResponse({"instance": ser_instance}, status=200)
-                #return redirect("dataset", id)
+                return redirect("dataset", id)
         else:
             dataset_form = DatasetForm()
 
@@ -133,6 +131,14 @@ def dataset(request, id):
     else:
         messages.add_message(request, messages.ERROR, "It is seems, that it is not your dataset.")
         return redirect("home")
+
+
+def dataset_status(request, id):
+    dataset_data = DataSets.objects.get(id=id)
+    result = {
+        "dataset_status": dataset_data.ready
+    }
+    return JsonResponse(result, status=200)
 
 
 def download(request, id_schema, id_dataset):
