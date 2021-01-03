@@ -110,7 +110,7 @@ def dataset(request, id):
                 generate_file_async.apply_async((dataset_form.id, str(user_dir)))
 
                 messages.add_message(request, messages.SUCCESS, "All clear, now please wait till Python generate file "
-                                                                "and AJAX show it")
+                                                                "and AJAX update status")
                 return redirect("dataset", id)
         else:
             dataset_form = DatasetForm()

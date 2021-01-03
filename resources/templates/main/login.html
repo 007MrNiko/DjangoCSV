@@ -3,14 +3,6 @@
 {% block body %}
     <div class="login_form">
         <h1>Log in to DjangoCSV</h1>
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong><span class="fas fa-fire"></span> Holy guacamole!</strong> {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
         <form method="POST" action="{% url "login" %}">
             {% csrf_token %}
             <div class="mb-3">

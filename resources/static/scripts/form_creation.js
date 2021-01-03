@@ -93,7 +93,7 @@ function moveOrderField(editForm, position = 0) {
         }
     });
 
-    moveCol.classList.replace(currentMargin, `offset-sm-${6 + position}`)
+    moveCol.classList.replace(currentMargin, `offset-sm-${5 + position}`)
 }
 
 function setDeleted(element_id) {

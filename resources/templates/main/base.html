@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DjangoCSV</title>
+    <link rel="shortcut icon" href="{% static 'images/DjangoCSV-favicon.png' %}" />
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
@@ -15,19 +16,20 @@
     {% block header %}{% endblock %}
 </head>
 <body>
-{% if user.is_authenticated %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<vanta class="vanta"></vanta>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light elements_bg">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url "home" %}">DjangoCSV</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+            {% if user.is_authenticated %}
             <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-link {% if nav_home %}active{% endif %}" aria-current="page" href="{% url "home" %}">Home</a>
                     <a class="nav-link {% if nav_schemas %}active{% endif %}" href="{% url "schemas" %}">Schemas</a>
-                    <a class="nav-link" href="{% url 'admin:index' %}">Admin panel</a>
+                    <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">Admin panel</a>
 
 
                 </div>
@@ -38,10 +40,11 @@
                     <a class="nav-link" href="{% url "logout" %}">Logout</a>
                 </div>
             </div>
+            {% endif %}
         </div>
     </nav>
-{% endif %}
-<div class="main_program">
+
+<div class="main_program elements_bg rounded">
     {% for message in messages %}
         {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -62,6 +65,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
         crossorigin="anonymous"></script>
+    <script src="{% static "scripts/three.min.js" %}"></script>
+    <script src="{% static "scripts/vanta.waves.min.js" %}"></script>
+    <script src="{% static "scripts/main.js" %}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>
