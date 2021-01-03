@@ -40,6 +40,8 @@ class Schemas(models.Model):
         return f"{self.user.username} - {self.name}"
 
     class Meta:
+        verbose_name = "Schema"
+        verbose_name_plural = "Schemas"
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'name'],
@@ -61,6 +63,10 @@ class SchemasColumn(models.Model):
     def __str__(self):
         return f"{self.schema.name} - {self.name}"
 
+    class Meta:
+        verbose_name = "Schemas column"
+        verbose_name_plural = "Schemas columns"
+
 
 class DataSets(models.Model):
     schema = models.ForeignKey(Schemas, on_delete=models.CASCADE)
@@ -69,3 +75,7 @@ class DataSets(models.Model):
     rows = models.IntegerField()
     file = models.FileField(upload_to=user_directory_path, blank=True)
     ready = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Data set"
+        verbose_name_plural = "Data sets"

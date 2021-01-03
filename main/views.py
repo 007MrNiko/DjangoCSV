@@ -21,6 +21,7 @@ def home(response):
 
 
 def schemas(request):
+    """Getting list of all user Schemas"""
     if not request.user.is_authenticated:
         return redirect("login")
 
@@ -35,6 +36,7 @@ def schemas(request):
 
 
 def schemas_new(request):
+    """Creating new Schema"""
     if not request.user.is_authenticated:
         return redirect("login")
 
@@ -43,14 +45,16 @@ def schemas_new(request):
         formset_schema_column = SchemasColumnFormset(request.POST)
 
         if form_schema_new.is_valid() and formset_schema_column.is_valid():
+            # Getting new schema and saving it to user
             schema = form_schema_new.save(commit=False)
             schema.user = request.user
             schema.save()
 
+            # Getting deleted rows from form to ignore them latter
             marked_for_delete = formset_schema_column.deleted_forms
 
             for form in formset_schema_column.forms:
-                # so that `book` instance can be attached.
+                # Adding columns to schema without deleted
                 if form not in marked_for_delete:
                     column = form.save(commit=False)
                     column.schema = schema
@@ -61,6 +65,7 @@ def schemas_new(request):
             return redirect("schemas")
 
         elif len(formset_schema_column) == 1 and form_schema_new.is_valid():
+            # Check if form have at least one column
             messages.add_message(request, messages.ERROR, f"Please add at least one column")
 
     else:
@@ -78,6 +83,7 @@ def schemas_new(request):
 
 
 def schemas_delete(request, id):
+    """Deleting schema if it user property"""
     if not request.user.is_authenticated:
         return redirect("login")
 
@@ -89,24 +95,30 @@ def schemas_delete(request, id):
 
 
 def dataset(request, id):
+    """Showing user dataset from schema """
     if not request.user.is_authenticated:
         return redirect("login")
 
     schema = Schemas.objects.filter(id=id, user=request.user)
 
     if schema.exists():
+        # Getting correct schema and list of datasets
         schema = Schemas.objects.get(id=id)
         datasets = DataSets.objects.filter(schema=schema)
 
         if request.method == "POST":
+            # Getting value from form and start generating file according to schema
             dataset_form = DatasetForm(request.POST)
             if dataset_form.is_valid():
+                # Adding schema to freshly created dataset
                 dataset_form = dataset_form.save(commit=False)
                 dataset_form.schema = schema
                 dataset_form.save()
 
+                # Getting user directory location
                 user_dir = settings.MEDIA_ROOT / f"user_{request.user.id}"
 
+                # Sending file generation to Celery | Redis
                 generate_file_async.apply_async((dataset_form.id, str(user_dir)))
 
                 messages.add_message(request, messages.SUCCESS, "All clear, now please wait till Python generate file "
@@ -125,11 +137,13 @@ def dataset(request, id):
 
         return render(request, "main/datasets.html", data)
     else:
+        # If schema does not belong to current user
         messages.add_message(request, messages.ERROR, "It is seems, that it is not your dataset.")
         return redirect("home")
 
 
 def dataset_status(request, id):
+    """Special function for AJAX, cheking for dataset file creation status"""
     dataset_data = DataSets.objects.get(id=id)
     result = {
         "dataset_status": dataset_data.ready
@@ -138,6 +152,7 @@ def dataset_status(request, id):
 
 
 def download(request, id_schema, id_dataset):
+    """Getting requested dataset from schema to download"""
     if not request.user.is_authenticated:
         return redirect("login")
 
@@ -145,11 +160,14 @@ def download(request, id_schema, id_dataset):
 
     if dataset_download.exists():
         dataset_download = DataSets.objects.get(id=id_dataset)
+        # Check for user
         if dataset_download.schema.user != request.user:
             messages.add_message(request, messages.ERROR, "It is seems, that it is not your dataset.")
+        # Check for ready file
         elif not dataset_download.ready:
             messages.add_message(request, messages.ERROR, "Your data set is not ready yet, but still you guessed its "
                                                           "id :).")
+        # Updating request with file
         else:
             filename = dataset_download.file.path
             request = FileResponse(open(filename, 'rb'), "text/csv")
@@ -161,6 +179,7 @@ def download(request, id_schema, id_dataset):
 
 
 def login(request):
+    """Simple login"""
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -177,6 +196,7 @@ def login(request):
 
 
 def logout(request):
+    """Simple logout"""
     if not request.user.is_authenticated:
         return redirect("login")
     logout_user(request)

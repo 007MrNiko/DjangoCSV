@@ -6,6 +6,7 @@ import csv
 
 
 def generate_file(dataset_id, user_dir):
+    """Generating .csv file from schema to user directory"""
     dataset = DataSets.objects.get(id=dataset_id)
     column_separator = dataset.schema.column_separator
     string_character = dataset.schema.string_character
@@ -35,6 +36,10 @@ def generate_file(dataset_id, user_dir):
     dataset.save()
 
 def generate_column_pattern(column_set):
+    """
+    Generating pattern for future parsing and row generation
+    Example pattern: [["F"],["P"],["I", 10, 23],["T", 2]]
+    """
     pattern = []
     for column in column_set:
         category = column.category
@@ -47,11 +52,13 @@ def generate_column_pattern(column_set):
         elif category == "integer":
             pattern.append(["I", column.min_integer, column.max_integer])
         else:
+            # T is for total sentences
             pattern.append(["T", column.sentence_amount])
 
     return pattern
 
 def generate_row_from_pattern(pattern):
+    """Generating data row from pattern by using small generators"""
     row = []
     for element in pattern:
         symbol = element[0]

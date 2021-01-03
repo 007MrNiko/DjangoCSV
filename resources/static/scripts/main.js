@@ -1,3 +1,4 @@
+// Simple configuration for background
 VANTA.WAVES({
   el: "vanta",
   mouseControls: true,

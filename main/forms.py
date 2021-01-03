@@ -6,6 +6,7 @@ from main.models import Schemas, SchemasColumn, CATEGORY_TYPE, DataSets
 
 
 class DatasetForm(forms.ModelForm):
+    """Small form for getting dataset rows amount"""
     class Meta:
         model = DataSets
         fields = ("rows",)
@@ -47,6 +48,7 @@ class SchemasNewForm(forms.ModelForm):
 
 
 class SchemasNewCategories(forms.Form):
+    """Form for column creation, like controller"""
     column_name = forms.CharField(
         max_length=30,
         widget=forms.TextInput(attrs={"class": "form-control"})
@@ -62,6 +64,7 @@ class SchemasNewCategories(forms.Form):
 
 
 class SchemasColumnFormsetEdit(BaseInlineFormSet):
+    """Overwritten BaseInlineFormSet for additional form styling"""
     def add_fields(self, form, index):
         super(SchemasColumnFormsetEdit, self).add_fields(form, index)
         if self.can_delete:
@@ -71,6 +74,7 @@ class SchemasColumnFormsetEdit(BaseInlineFormSet):
             )
 
 
+# Factory for columns creation
 SchemasColumnFormset = inlineformset_factory(
     Schemas,
     SchemasColumn,

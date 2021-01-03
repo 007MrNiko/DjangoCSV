@@ -17,6 +17,7 @@
     display: inline;
 }
 
+/* Changing view at different displays */
 @media screen and (max-width: 767px) {
     .main_program {
         margin: 3em 2em;
