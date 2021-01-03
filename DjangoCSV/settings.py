@@ -18,7 +18,7 @@ DEBUG = env("DEBUG") == "True"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "djangocsv.herokuapp.com"]
 
 # Application definition
 
@@ -43,6 +43,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'DjangoCSV.urls'
@@ -69,12 +70,24 @@ WSGI_APPLICATION = 'DjangoCSV.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env("DATABASE_NAME"),
+            'HOST': env("DATABASE_HOST"),
+            'PORT': 5432,
+            'USER': env("DATABASE_USER"),
+            'PASSWORD': env("DATABASE_PASSWORD"),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
