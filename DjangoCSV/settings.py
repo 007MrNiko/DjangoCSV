@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import environ
 
 # Getting environmental variables
