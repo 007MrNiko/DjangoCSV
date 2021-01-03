@@ -23,15 +23,19 @@
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="{% url "home" %}">Home</a>
-                    <a class="nav-link" href="{% url "schemas" %}">Schemas</a>
+                    <a class="nav-link {% if nav_home %}active{% endif %}" aria-current="page" href="{% url "home" %}">Home</a>
+                    <a class="nav-link {% if nav_schemas %}active{% endif %}" href="{% url "schemas" %}">Schemas</a>
                     <a class="nav-link" href="{% url 'admin:index' %}">Admin panel</a>
+
+
+                </div>
+                <div class="navbar-nav">
+                    <span class="navbar-text">
+                          Welcome, <strong>{{ user.username }}</strong>
+                      </span>
                     <a class="nav-link" href="{% url "logout" %}">Logout</a>
-                    <!--<span class="navbar-text">
-                          Welcome, {{ user.username }}
-                      </span>-->
                 </div>
             </div>
         </div>

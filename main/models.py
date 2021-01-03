@@ -22,6 +22,7 @@ CATEGORY_TYPE = (
     ("text", "Text")
 )
 
+
 def user_directory_path(instance, filename):
     # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
     return f"user_{instance.schema.user.id}/{filename}"
@@ -68,5 +69,3 @@ class DataSets(models.Model):
     rows = models.IntegerField()
     file = models.FileField(upload_to=user_directory_path, blank=True)
     ready = models.BooleanField(default=False)
-
-

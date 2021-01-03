@@ -8,29 +8,29 @@
 
     <script>
         function getStatus(requestURL, datasetID, downloadLink) {
-          $.ajax({
-              method: 'GET',
-              url: requestURL,
-          })
-          .done((res) => {
-            const taskStatus = res.dataset_status;
+            $.ajax({
+                method: 'GET',
+                url: requestURL,
+            })
+                .done((res) => {
+                    const taskStatus = res.dataset_status;
 
-            if (taskStatus === true) {
-                $("#processing-"+datasetID).html("Ready").addClass('bg-success');
-                $("#download-"+datasetID).append(
-                    `<a class="link-primary edit_link" href="${downloadLink}"><i class="fas fa-file-download"></i> Download</a>`
-                )
-                return false;
-            }
+                    if (taskStatus === true) {
+                        $("#processing-" + datasetID).html("Ready").addClass('bg-success');
+                        $("#download-" + datasetID).append(
+                            `<a class="link-primary edit_link" href="${downloadLink}"><i class="fas fa-file-download"></i> Download</a>`
+                        )
+                        return false;
+                    }
 
 
-            setTimeout(function() {
-              getStatus(requestURL, datasetID, downloadLink);
-            }, 1000);
-          })
-          .fail((err) => {
-            console.log(err)
-          });
+                    setTimeout(function () {
+                        getStatus(requestURL, datasetID, downloadLink);
+                    }, 1000);
+                })
+                .fail((err) => {
+                    console.log(err)
+                });
         }
     </script>
 {% endblock %}
@@ -38,56 +38,58 @@
 {% block body %}
     <div class="d-flex justify-content-between">
         <div>
-             <h2>Data sets - {{ name }}</h2>
-          </div>
-          <div>
-              <form method="POST" id="data-set-form" class="row row-cols-lg-auto g-3 align-items-end">
-                  {% csrf_token %}
-                  <div class="col-sm-2 col-form-label">Rows: </div>
-                  <div class="col-sm-2" style="width: 8em">{{ form.rows }}</div>
-                  <div class="col-sm-2">
-                      <button type="submit" class="btn btn-success">New schema</button>
-                  </div>
-              </form>
-          </div>
+            <h2>Data sets - {{ name }}</h2>
+        </div>
+        <div>
+            <form method="POST" id="data-set-form" class="row row-cols-lg-auto g-3 align-items-end">
+                {% csrf_token %}
+                <div class="col-sm-2 col-form-label">Rows:</div>
+                <div class="col-sm-2" style="width: 8em">{{ form.rows }}</div>
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-success">New schema</button>
+                </div>
+            </form>
+        </div>
     </div>
     <div>
         <table class="table table-bordered" id="data-set-table">
-          <thead>
+            <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Created</th>
-              <th scope="col">Rows</th>
-              <th scope="col">Status</th>
-              <th scope="col">Actions</th>
+                <th scope="col">#</th>
+                <th scope="col">Created</th>
+                <th scope="col">Rows</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
             </tr>
-          </thead>
-          <tbody>
-          {% for dataset in datasets %}
-              <tr>
-                  <th scope="row">{{ forloop.counter }}</th>
-                  <td>{{ dataset.date_created|date:"j F Y H:i" }}</td>
-                  <td>{{ dataset.rows }}</td>
-                  <td style="width: 16%; text-align: center;">
-                      {% if dataset.ready %}
-                          <span class="badge bg-success">Ready</span>
-                      {% else %}
-                          <script>
-                            $(document).ready(function(){
-                                  getStatus("{% url "dataset_status" dataset.id %}", {{ dataset.id }}, "{% url "download" id_schema=schema_id id_dataset=dataset.id %}");
+            </thead>
+            <tbody>
+            {% for dataset in datasets %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ dataset.date_created|date:"j F Y H:i" }}</td>
+                    <td>{{ dataset.rows }}</td>
+                    <td style="width: 16%; text-align: center;">
+                        {% if dataset.ready %}
+                            <span class="badge bg-success">Ready</span>
+                        {% else %}
+                            <script>
+                                $(document).ready(function () {
+                                    getStatus("{% url "dataset_status" dataset.id %}", {{ dataset.id }}, "{% url "download" id_schema=schema_id id_dataset=dataset.id %}");
                                 });
-                          </script>
-                        <span id="processing-{{ dataset.id }}" class="badge bg-secondary">Processing</span>
-                      {% endif %}
-                  </td>
-                  <td id="download-{{ dataset.id }}" style="text-align: center;">
-                      {% if dataset.ready %}
-                      <a class="link-primary edit_link" href="{% url "download" id_schema=schema_id id_dataset=dataset.id %}"><i class="fas fa-file-download"></i> Download</a>
-                      {% endif %}
-                  </td>
-              </tr>
-          {% endfor %}
-          </tbody>
+                            </script>
+                            <span id="processing-{{ dataset.id }}" class="badge bg-secondary">Processing</span>
+                        {% endif %}
+                    </td>
+                    <td id="download-{{ dataset.id }}" style="text-align: center;">
+                        {% if dataset.ready %}
+                            <a class="link-primary edit_link"
+                               href="{% url "download" id_schema=schema_id id_dataset=dataset.id %}"><i
+                                    class="fas fa-file-download"></i> Download</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
         </table>
     </div>
 {% endblock %}

@@ -60,6 +60,7 @@ class SchemasNewCategories(forms.Form):
         widget=forms.NumberInput(attrs={"class": "form-control"})
     )
 
+
 class SchemasColumnFormsetEdit(BaseInlineFormSet):
     def add_fields(self, form, index):
         super(SchemasColumnFormsetEdit, self).add_fields(form, index)

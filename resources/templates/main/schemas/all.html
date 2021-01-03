@@ -3,35 +3,36 @@
 {% block body %}
     <div class="d-flex justify-content-between">
         <div>
-             <h2>Data schemas</h2>
-          </div>
-          <div>
-              <h2><a type="submit" href="{% url "schemas_new" %}" class="btn btn-success">New schema</a></h2>
-          </div>
+            <h2>Data schemas</h2>
+        </div>
+        <div>
+            <h2><a type="submit" href="{% url "schemas_new" %}" class="btn btn-success">New schema</a></h2>
+        </div>
     </div>
     <div>
         <table class="table table-bordered">
-          <thead>
+            <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Title</th>
-              <th scope="col">Modified</th>
-              <th scope="col">Actions</th>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Modified</th>
+                <th scope="col">Actions</th>
             </tr>
-          </thead>
-          <tbody>
-          {% for schema in schemas %}
-              <tr>
-                  <th scope="row">{{ forloop.counter }}</th>
-                  <td><a href="{% url "dataset" schema.id %}">{{ schema.name }}</a></td>
-                  <td>{{ schema.last_modified|date:"j F Y H:i" }}</td>
-                  <td class="d-flex justify-content-center">
-                      <a class="link-primary edit_link" href="#"><i class="fas fa-edit"></i> Edit scheme</a>
-                      <a class="link-danger ms-3 edit_link" href="{% url "schemas_delete" schema.id %}"><i class="fas fa-trash-alt"></i> Delete</a>
-                  </td>
-              </tr>
-          {% endfor %}
-          </tbody>
+            </thead>
+            <tbody>
+            {% for schema in schemas %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><a href="{% url "dataset" schema.id %}">{{ schema.name }}</a></td>
+                    <td>{{ schema.last_modified|date:"j F Y H:i" }}</td>
+                    <td class="d-flex justify-content-center">
+                        <a class="link-primary edit_link" href="#"><i class="fas fa-edit"></i> Edit scheme</a>
+                        <a class="link-danger ms-3 edit_link" href="{% url "schemas_delete" schema.id %}"><i
+                                class="fas fa-trash-alt"></i> Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
         </table>
     </div>
 {% endblock %}

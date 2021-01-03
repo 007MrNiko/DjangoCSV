@@ -1,13 +1,15 @@
-.main_program{
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap');
+
+.main_program {
     padding: 0 15%;
     margin: 130px 0 160px;
 }
 
-.login_form{
+.login_form {
     padding: 0 10em;
 }
 
-.edit_link{
+.edit_link {
     text-decoration: none !important;
 }
 
@@ -15,17 +17,22 @@
     display: inline;
 }
 
-@media screen and (max-width: 767px){
-    .main_program{
+@media screen and (max-width: 767px) {
+    .main_program {
         padding: 0 10%;
     }
 }
-@media screen and (max-width: 950px){
-    .login_form{
+
+@media screen and (max-width: 950px) {
+    .login_form {
         padding: 0;
     }
 }
 
-.add_column_form{
+.add_column_form {
     padding-top: 1em;
+}
+
+html * {
+    font-family: 'Roboto', sans-serif !important;
 }

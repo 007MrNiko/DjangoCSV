@@ -9,11 +9,13 @@
     <form method="POST">
         <div class="d-flex justify-content-between">
             <div>
-                 <h2>New Schema</h2>
-              </div>
-              <div>
-                  <h2><button type="submit" name="submit_form" class="btn btn-primary">Submit</button></h2>
-              </div>
+                <h2>New Schema</h2>
+            </div>
+            <div>
+                <h2>
+                    <button type="submit" name="submit_form" class="btn btn-primary">Submit</button>
+                </h2>
+            </div>
         </div>
         {% csrf_token %}
         {% for field in form_new %}
@@ -23,13 +25,13 @@
                 {% if field.errors %}
                     {% for error in field.errors %}
                         <div class="invalid-feedback invalid_feedback_modifier">
-                        {{ error }}
+                            {{ error }}
                         </div>
                     {% endfor %}
                 {% endif %}
             </div>
         {% endfor %}
-        <div style="margin: 3em 0"  id="submit_form">
+        <div style="margin: 3em 0" id="submit_form">
             <h2>Schema columns</h2>
             <!--Add new forms here-->
             {{ form_set.management_form }}
@@ -57,24 +59,26 @@
 
     <div hidden>
         <div class="row mb-3 column_form">
-        {% for field in form_set.forms|first %}
-            {% if field.field.widget.input_type != "hidden" %}
-                {% if "order" in field.auto_id %}
-                    <div class="col-sm-1 offset-sm-6 moving_order">
-                        <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
-                        {{ field }}
-                    </div>
-                    <div class="col-sm-1" style="text-align: center; padding-top: 2em;">
-                        <a class="link-danger ms-3 edit_link" id="{{ field.auto_id }}-del" onclick="setDeleted(this.id)" style="cursor: pointer;"><i class="fas fa-trash-alt fa-2x"></i></a>
-                    </div>
-                {% else %}
-                    <div class="col-sm-2">
-                        <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
-                        {{ field }}
-                    </div>
+            {% for field in form_set.forms|first %}
+                {% if field.field.widget.input_type != "hidden" %}
+                    {% if "order" in field.auto_id %}
+                        <div class="col-sm-1 offset-sm-6 moving_order">
+                            <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                        <div class="col-sm-1" style="text-align: center; padding-top: 2em;">
+                            <a class="link-danger ms-3 edit_link" id="{{ field.auto_id }}-del"
+                               onclick="setDeleted(this.id)" style="cursor: pointer;"><i
+                                    class="fas fa-trash-alt fa-2x"></i></a>
+                        </div>
+                    {% else %}
+                        <div class="col-sm-2">
+                            <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-        {% endfor %}
+            {% endfor %}
         </div>
 
     </div>

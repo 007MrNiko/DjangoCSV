@@ -1,29 +1,23 @@
-from django.http import FileResponse, JsonResponse
-from django.shortcuts import render, redirect, HttpResponse
-from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.core import serializers
+from django.contrib import messages
 from django.contrib.auth import (
     authenticate,
     login as login_user,
     logout as logout_user
 )
-from django.contrib import messages
+from django.http import FileResponse, JsonResponse
+from django.shortcuts import render, redirect
 
-from main.models import Schemas, DataSets, user_directory_path
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
-
-from extensions import generate_file
+from main.models import Schemas, DataSets
 from .tasks import generate_file_async
 
-
-# Create your views here.
 
 def home(response):
     if not response.user.is_authenticated:
         return redirect("login")
 
-    return render(response, "main/home.html")
+    return render(response, "main/home.html", {"nav_home": True})
 
 
 def schemas(request):
@@ -33,7 +27,8 @@ def schemas(request):
     user_schemas = Schemas.objects.all().filter(user=request.user)
 
     data = {
-        "schemas": user_schemas
+        "schemas": user_schemas,
+        "nav_schemas": True
     }
 
     return render(request, "main/schemas/all.html", data)
@@ -75,7 +70,8 @@ def schemas_new(request):
     data = {
         "form_new": form_schema_new,
         "form_add_category": SchemasNewCategories(),
-        "form_set": formset_schema_column
+        "form_set": formset_schema_column,
+        "nav_schemas": True
     }
 
     return render(request, "main/schemas/new.html", data)
@@ -111,11 +107,10 @@ def dataset(request, id):
 
                 user_dir = settings.MEDIA_ROOT / f"user_{request.user.id}"
 
-                #generate_file(dataset_form, user_dir)
                 generate_file_async.apply_async((dataset_form.id, str(user_dir)))
 
-                messages.add_message(request, messages.SUCCESS, "Your dataset has been successfully "
-                                                                "created.")
+                messages.add_message(request, messages.SUCCESS, "All clear, now please wait till Python generate file "
+                                                                "and AJAX show it")
                 return redirect("dataset", id)
         else:
             dataset_form = DatasetForm()
@@ -124,7 +119,8 @@ def dataset(request, id):
             "name": schema.name,
             "datasets": datasets,
             "form": dataset_form,
-            "schema_id": schema.id
+            "schema_id": schema.id,
+            "nav_schemas": True
         }
 
         return render(request, "main/datasets.html", data)
