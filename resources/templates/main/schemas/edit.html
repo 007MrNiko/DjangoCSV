@@ -1,0 +1,39 @@
+{% extends "main/schemas/new.html" %}
+{% load static %}
+
+
+
+{% block title %}Schema edit{% endblock %}
+
+{% block title_inside %}Edit Schema{% endblock %}
+
+{% block form_list %}
+    {% for form in form_set.forms %}
+        {% if not forloop.last %}
+            <div class="row mb-3 column_form">
+                {{ form.id }}
+                {% for field in form %}
+                    {% if field.field.widget.input_type != "hidden" %}
+                        {% if "order" in field.auto_id %}
+                            <div class="col-sm-2 offset-sm-5 moving_order">
+                                <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                            <div class="col-sm-1" style="text-align: center; padding-top: 2em;">
+                                <a class="link-danger ms-3 edit_link" id="{{ field.auto_id }}-del"
+                                   onclick="setDeleted(this.id)" style="cursor: pointer;"><i
+                                        class="fas fa-trash-alt fa-2x"></i></a>
+                            </div>
+                        {% else %}
+                            <div class="col-sm-2">
+                                <label class="form-label" for="{{ field.auto_id }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                <script>realTimeChanging("{{ form.category.auto_id }}")</script>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

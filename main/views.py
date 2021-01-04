@@ -8,7 +8,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
-from main.models import Schemas, DataSets
+from main.models import Schemas, DataSets, SchemasColumn
 from .tasks import generate_file_async
 from extensions import get_filename
 
@@ -64,7 +64,7 @@ def schemas_new(request):
                                                             "created.")
             return redirect("schemas")
 
-        elif len(formset_schema_column) == 1 and form_schema_new.is_valid():
+        elif len(formset_schema_column) < 1 and form_schema_new.is_valid():
             # Check if form have at least one column
             messages.add_message(request, messages.ERROR, f"Please add at least one column")
 
@@ -80,6 +80,58 @@ def schemas_new(request):
     }
 
     return render(request, "main/schemas/new.html", data)
+
+
+def schemas_edit(request, id):
+    """Editing Schema"""
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    schema = Schemas.objects.filter(id=id, user=request.user)
+
+    if schema.exists():
+        schema = Schemas.objects.get(id=id)
+        if request.method == "POST":
+            form_schema_edit = SchemasNewForm(request.POST, instance=schema)
+            formset_schema_columns = SchemasColumnFormset(request.POST)
+
+            if form_schema_edit.is_valid() and formset_schema_columns.is_valid():
+                # Updating Schema with new values
+                form_schema_edit.save()
+
+                # Cleaning old columns and creating new
+                SchemasColumn.objects.filter(schema=schema).delete()
+                marked_for_delete = formset_schema_columns.deleted_forms
+
+                for form in formset_schema_columns.forms:
+                    # Adding columns to schema without deleted
+                    if form not in marked_for_delete:
+                        column = form.save(commit=False)
+                        column.schema = schema
+                        column.save()
+
+                messages.add_message(request, messages.SUCCESS, f"Your schema '{schema.name}' has been successfully "
+                                                                "updated.")
+                return redirect("schemas")
+
+            elif len(formset_schema_columns) < 1 and form_schema_edit.is_valid():
+                # Check if form have at least one column
+                messages.add_message(request, messages.ERROR, f"Please add at least one column")
+        else:
+            form_schema_edit = SchemasNewForm(instance=schema)
+            formset_schema_columns = SchemasColumnFormset(instance=schema)
+    else:
+        messages.add_message(request, messages.ERROR, "It is seems, that this schema does not exist.")
+        return redirect("home")
+
+    data = {
+        "form_new": form_schema_edit,
+        "form_add_category": SchemasNewCategories(),
+        "form_set": formset_schema_columns,
+        "nav_schemas": True
+    }
+
+    return render(request, "main/schemas/edit.html", data)
 
 
 def schemas_delete(request, id):
