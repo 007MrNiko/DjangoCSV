@@ -5,10 +5,8 @@ from django.contrib.auth import (
     login as login_user,
     logout as logout_user
 )
-from django.http import JsonResponse, HttpResponse
+from django.http import FileResponse, JsonResponse
 from django.shortcuts import render, redirect
-
-from pathlib import Path
 
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
 from main.models import Schemas, DataSets
@@ -172,10 +170,8 @@ def download(request, id_schema, id_dataset):
         # Updating request with file
         else:
             filename = dataset_download.file.path
-            with open(filename, 'rb') as fh:
-                request = HttpResponse(fh.read(), content_type="text/csv")
-                request['Content-Disposition'] = f'inline; filename={Path(filename).name}'
-                return request
+            request = FileResponse(open(filename, 'rb'), "text/csv")
+            return request
     else:
         messages.add_message(request, messages.ERROR, "It is seems, that this dataset does not exist :(")
 
