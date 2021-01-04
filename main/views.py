@@ -1,16 +1,16 @@
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import (
     authenticate,
     login as login_user,
     logout as logout_user
 )
-from django.http import FileResponse, JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
 from main.models import Schemas, DataSets
 from .tasks import generate_file_async
+from extensions import get_filename
 
 
 def home(response):
@@ -166,8 +166,9 @@ def download(request, id_schema, id_dataset):
                                                           "id :).")
         # Updating request with file
         else:
-            filename = dataset_download.file.path
-            request = FileResponse(open(filename, 'rb'), "text/csv")
+            request = HttpResponse(dataset_download.file, content_type='text/csv')
+            request['Content-Disposition'] = f"attachment; filename={get_filename(dataset_download.file.name)}"
+
             return request
     else:
         messages.add_message(request, messages.ERROR, "It is seems, that this dataset does not exist :(")

@@ -28,7 +28,7 @@ def generate_file(dataset_id):
         writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC, delimiter=column_separator, quotechar=string_character)
         writer.writerows(row_list)
 
-    dataset.file.save(filename, File(open(filename)))
+    dataset.file.save(filename, File(open(filename, "rb")))
     dataset.ready = True
     dataset.save()
 
