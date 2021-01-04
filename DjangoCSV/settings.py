@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
 
     'django_cleanup.apps.CleanupConfig',
+
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -126,7 +128,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles"
+#STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [
     BASE_DIR / "resources/static"
 ]
@@ -139,4 +141,21 @@ MEDIA_ROOT = BASE_DIR / "resources/media"
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = "djangocsv"
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+AWS_S3_HOST = "s3.eu-central-1.amazonaws.com"
+AWS_S3_REGION_NAME = "eu-central-1"
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+
+STATICFILES_LOCATION = 'static'
+STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
