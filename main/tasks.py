@@ -4,7 +4,7 @@ from extensions import generate_file
 
 
 @shared_task
-def generate_file_async(dataset_form, user_dir):
+def generate_file_async(dataset_form):
     """Celery function wrapper for simple function"""
-    generate_file(dataset_form, user_dir)
+    generate_file(dataset_form)
 

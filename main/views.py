@@ -115,11 +115,8 @@ def dataset(request, id):
                 dataset_form.schema = schema
                 dataset_form.save()
 
-                # Getting user directory location
-                user_dir = settings.MEDIA_ROOT / f"user_{request.user.id}"
-
                 # Sending file generation to Celery | Redis
-                generate_file_async.apply_async((dataset_form.id, str(user_dir)))
+                generate_file_async.apply_async((dataset_form.id,))
 
                 messages.add_message(request, messages.SUCCESS, "All clear, now please wait till Python generate file "
                                                                 "and AJAX update status")
