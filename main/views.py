@@ -42,18 +42,26 @@ def schemas_new(request):
 
     if request.method == "POST":
         form_schema_new = SchemasNewForm(request.POST)
-        formset_schema_column = SchemasColumnFormset(request.POST)
+        formset_schema_columns = SchemasColumnFormset(request.POST)
 
-        if form_schema_new.is_valid() and formset_schema_column.is_valid():
+        # amount of editable rows
+        edit_forms = len(formset_schema_columns.forms) - len(formset_schema_columns.deleted_forms)
+
+        if edit_forms < 1 and form_schema_new.is_valid():
+            # Check if form have at least one column
+            messages.add_message(request, messages.ERROR, f"Please add at least one column")
+            return redirect("schemas_new")
+
+        elif form_schema_new.is_valid() and formset_schema_columns.is_valid():
             # Getting new schema and saving it to user
             schema = form_schema_new.save(commit=False)
             schema.user = request.user
             schema.save()
 
             # Getting deleted rows from form to ignore them latter
-            marked_for_delete = formset_schema_column.deleted_forms
+            marked_for_delete = formset_schema_columns.deleted_forms
 
-            for form in formset_schema_column.forms:
+            for form in formset_schema_columns.forms:
                 # Adding columns to schema without deleted
                 if form not in marked_for_delete:
                     column = form.save(commit=False)
@@ -63,19 +71,14 @@ def schemas_new(request):
             messages.add_message(request, messages.SUCCESS, f"Your schema '{schema.name}' has been successfully "
                                                             "created.")
             return redirect("schemas")
-
-        elif len(formset_schema_column) < 1 and form_schema_new.is_valid():
-            # Check if form have at least one column
-            messages.add_message(request, messages.ERROR, f"Please add at least one column")
-
     else:
         form_schema_new = SchemasNewForm()
-        formset_schema_column = SchemasColumnFormset()
+        formset_schema_columns = SchemasColumnFormset()
 
     data = {
         "form_new": form_schema_new,
         "form_add_category": SchemasNewCategories(),
-        "form_set": formset_schema_column,
+        "form_set": formset_schema_columns,
         "nav_schemas": True
     }
 
@@ -92,31 +95,26 @@ def schemas_edit(request, id):
     if schema.exists():
         schema = Schemas.objects.get(id=id)
         if request.method == "POST":
+
             form_schema_edit = SchemasNewForm(request.POST, instance=schema)
-            formset_schema_columns = SchemasColumnFormset(request.POST)
+            formset_schema_columns = SchemasColumnFormset(request.POST, instance=schema)
 
-            if form_schema_edit.is_valid() and formset_schema_columns.is_valid():
-                # Updating Schema with new values
+            # amount of editable rows
+            edit_forms = len(formset_schema_columns.forms) - len(formset_schema_columns.deleted_forms)
+
+            if edit_forms < 1 and form_schema_edit.is_valid():
+                # Check if form have at least one column
+                messages.add_message(request, messages.ERROR, f"Please add at least one column")
+                return redirect("schemas_edit", id)
+
+            elif form_schema_edit.is_valid() and formset_schema_columns.is_valid():
+                # Updating Schema and Columns with new values
                 form_schema_edit.save()
-
-                # Cleaning old columns and creating new
-                SchemasColumn.objects.filter(schema=schema).delete()
-                marked_for_delete = formset_schema_columns.deleted_forms
-
-                for form in formset_schema_columns.forms:
-                    # Adding columns to schema without deleted
-                    if form not in marked_for_delete:
-                        column = form.save(commit=False)
-                        column.schema = schema
-                        column.save()
+                formset_schema_columns.save()
 
                 messages.add_message(request, messages.SUCCESS, f"Your schema '{schema.name}' has been successfully "
                                                                 "updated.")
                 return redirect("schemas")
-
-            elif len(formset_schema_columns) < 1 and form_schema_edit.is_valid():
-                # Check if form have at least one column
-                messages.add_message(request, messages.ERROR, f"Please add at least one column")
         else:
             form_schema_edit = SchemasNewForm(instance=schema)
             formset_schema_columns = SchemasColumnFormset(instance=schema)
