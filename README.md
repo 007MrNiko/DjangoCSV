@@ -9,4 +9,3 @@ DjangoCSV Libraries and Technologies
 * Background Task Queue: Celery
 * Broker: Redis
 * Server: Heroku, AWS S3 (for static, media data)
-* API: Google, GitHub
