@@ -29,8 +29,9 @@
                 <div class="navbar-nav">
                     <a class="nav-link {% if nav_home %}active{% endif %}" aria-current="page" href="{% url "home" %}">Home</a>
                     <a class="nav-link {% if nav_schemas %}active{% endif %}" href="{% url "schemas" %}">Schemas</a>
-                    <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">Admin panel</a>
-
+                    {% if user.is_superuser %}
+                        <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">Admin panel</a>
+                    {% endif %}
 
                 </div>
                 <div class="navbar-nav">

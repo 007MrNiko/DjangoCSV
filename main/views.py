@@ -8,7 +8,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 
 from main.forms import SchemasNewForm, SchemasNewCategories, SchemasColumnFormset, DatasetForm
-from main.models import Schemas, DataSets, SchemasColumn
+from main.models import Schemas, DataSets
 from .tasks import generate_file_async
 from extensions import get_filename
 
