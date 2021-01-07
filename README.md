@@ -1,6 +1,6 @@
 DjangoCSV Libraries and Technologies
 ===============================
-###Online service for generating CSV files with fake(dummy) data using Python and Django
+### Online service for generating CSV files with fake(dummy) data using Python and Django
 
 * Languages: Python, JavaScript (jQuery), HTML, CSS
 * Framework: Django 
